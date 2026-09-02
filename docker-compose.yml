@@ -1,0 +1,58 @@
+# ==============================================================
+# Módulo INNOVACIÓN CURRICULAR — versión 1
+#
+#   API INNOVACIÓN CURRICULAR (FastAPI, :8030) ──→ PostgreSQL (:15451)
+#
+# TODO el sistema está declarado aquí. Un solo comando lo levanta:
+#
+#     docker compose up -d --build
+#
+# No hay que instalar Python, ni PostgreSQL, ni nada: solo Docker.
+# ==============================================================
+
+services:
+
+  # --- La base de datos ---------------------------------------------
+  postgres:
+    image: postgres:16
+    container_name: paradigmas-innovacion-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: innovacion
+      POSTGRES_PASSWORD: Innovacion123!
+      POSTGRES_DB: innovacion_local
+    ports:
+      - "15451:5432"          # para DBeaver o pgAdmin, opcional
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # PostgreSQL ejecuta SOLO lo que encuentre aquí, y SOLO la primera vez
+      # (cuando el volumen está vacío). Por eso no hace falta un contenedor
+      # inicializador: el motor se encarga.
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      # La API arranca cuando la base RESPONDE, no cuando el contenedor existe
+      test: ["CMD-SHELL", "pg_isready -U innovacion -d innovacion_local"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # --- La API: FastAPI ----------------------------------------------
+  api-innovacion:
+    build: ./api_innovacion
+    container_name: paradigmas-innovacion-api
+    restart: unless-stopped
+    command: uvicorn main:app --host 0.0.0.0 --port 8030 --reload
+    ports:
+      - "8030:8030"           # el MISMO número adentro y afuera
+    volumes:
+      - ./api_innovacion:/app   # el código montado: guardar un .py recarga solo
+    environment:
+      # El host es el NOMBRE del servicio (postgres), nunca localhost: dentro
+      # de un contenedor, localhost es él mismo.
+      DB_POSTGRES: postgresql+asyncpg://innovacion:Innovacion123!@postgres:5432/innovacion_local
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pgdata:                     # la "memoria" de la base entre reinicios
