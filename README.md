@@ -28,6 +28,8 @@ docker compose up -d --build
 
 | Qué | Dónde |
 |---|---|
+| **LA PANTALLA** (lo que ve el usuario) | http://localhost:8028 |
+| Aliados | http://localhost:8028/aliados |
 | **API — documentación interactiva** | http://localhost:8030/docs |
 | Diagnóstico | http://localhost:8030/ |
 | Listado | http://localhost:8030/api/aliado |

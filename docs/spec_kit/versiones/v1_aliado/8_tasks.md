@@ -117,3 +117,29 @@ docker compose start postgres
 - [ ] [9_checklist.md](9_checklist.md) firmada.
 - [ ] La colección de Postman y el README.
 - [ ] Commit y **tag `v1`**.
+
+
+## El FRONT: la otra mitad de la versión
+
+Va **después** de que la API responda y **antes** del cierre. Sin esta fase la
+versión está a medias.
+
+| # | Tarea | Archivo |
+|---|---|---|
+| 1 | El proyecto Blazor Server, **sin ningún paquete de acceso a datos** | `front_blazor/FrontInnovacion.csproj` |
+| 2 | `ServicioAliado`: seis métodos, uno por operación | `Servicios/ServicioAliado.cs` |
+| 3 | El tipo `Resultado<T>`, para que las páginas no vean códigos de estado | `Servicios/ServicioAliado.cs` |
+| 4 | La traducción del sobre de error a textos para el usuario | `Servicios/ServicioAliado.cs` |
+| 5 | El marco y el menú, con **un enlace por pantalla** | `Components/Layout/` |
+| 6 | La pantalla del CRUD, con los **dos botones** de guardar | `Components/Pages/Aliados.razor` |
+| 7 | Los estilos, escritos a mano | `wwwroot/app.css` |
+| 8 | El servicio en el compose, en el **8028**, sin `depends_on: postgres` | `docker-compose.yml` |
+| 9 | La prueba de humo del front | `pruebas_humo/humo_front.py` |
+
+**Verificación de la fase:**
+
+- [ ] `http://localhost:8028/aliados` muestra las filas.
+- [ ] El recorrido a mano de `7_quickstart.md` se hizo completo.
+- [ ] `python pruebas_humo/humo_front.py` da todo en verde.
+- [ ] **Con `docker compose stop api-innovacion`, la pantalla sigue en pie
+      con su aviso y sin un solo dato.**
