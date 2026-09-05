@@ -52,11 +52,17 @@ peticiones y prueba sin base de datos— sobre la tabla **con más campos de
 las siete sin clave foránea** (seis: `nit`, `razon_social`,
 `nombre_contacto`, `correo`, `telefono`, `ciudad`).
 
-Y arranca **vacía**, a propósito: el Excel de referencia no trae aliados.
-Eso no es una carencia sino una ventaja para el smoke test, que puede
-recorrer el ciclo completo desde el principio —**listado vacío → 204,
-crear → 1 fila, borrar → 204 otra vez**— y ejercitar el 204 que una tabla
-llena nunca deja probar.
+El Excel de referencia **no trae un solo aliado** —su hoja tiene la
+cabecera y nada más—, así que arranca con **14 filas de ejemplo,
+inventadas y anunciadas como tales**: correos en `example.com`, teléfonos
+con `555` y el aviso escrito encima del `INSERT`, porque un dato inventado
+que no se anuncia termina citado como si fuera del módulo.
+
+El smoke test recorre el ciclo sobre esos datos —**listar → crear → total
+15 → borrar → total 14**— y compara contra la pantalla lo que la API
+devolvió. Lo que se perdió al sembrar está dicho en `4_research.md`
+D-v1-9: el **204 del listado vacío** sigue en el contrato pero ya no se ve
+al arrancar.
 
 Las demás tablas de la v1 son **ese mismo patrón** con otros nombres. El
 equipo que tome este ejemplo lo revisa, y **si está de acuerdo lo retoma y

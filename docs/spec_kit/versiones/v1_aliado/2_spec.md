@@ -47,8 +47,10 @@ otros nombres.
 `GET /api/aliado` → 200 con el sobre `{tabla, limite, total, datos:[…]}`.
 - Devuelve **solo los activos**.
 - Parámetro opcional `limite` (entero > 0; por defecto 1000).
-- Sin filas activas → **204** sin cuerpo. **Este es el estado inicial del
-  sistema**: la tabla arranca vacía.
+- Sin filas activas → **204** sin cuerpo. Sigue en el contrato, pero
+  **ya no es el estado inicial**: la tabla arranca con 14 filas
+  (§3 de [5_data_model.md](5_data_model.md)). Para ver el 204 hay que
+  vaciarla a propósito.
 
 ### RF2 — Obtener por NIT (GET + parámetro de ruta)
 `GET /api/aliado/{nit}` → 200 con el aliado.
@@ -93,31 +95,31 @@ otros nombres.
 
 ## 5. Criterios de aceptación
 
-1. **Un solo comando.** `docker compose up -d --build` deja corriendo SQL
-   Server —con la base creada y sus 25 tablas— y la API.
+1. **Un solo comando.** `docker compose up -d --build` deja corriendo PostgreSQL —con la base creada y sus 25 tablas— y la API.
    `GET http://localhost:8030/` responde el diagnóstico con
    `"version":"v1"`.
-2. **El sistema arranca vacío.** `GET /api/aliado` responde **204 sin
-   cuerpo**: no hay aliados todavía, y vacío no es error.
+2. **El sistema arranca CON DATOS.** `GET /api/aliado` responde **200**
+   con `total: 14`. El **204** sigue siendo la respuesta correcta a un
+   listado vacío, y el front lo trata como tal; lo que cambió es que ya
+   no se llega ahí arrancando.
 3. **Crear y listar.** Un `POST` con los seis campos responde 200; después,
-   `GET /api/aliado` responde **200 con `total: 1`** y el aliado creado.
+   `GET /api/aliado` responde **200 con `total: 15`** y el aliado creado.
 4. **Ciclo de los cinco verbos.** `POST` crea el NIT `900123456` → `PUT` lo
    reemplaza completo → `PATCH` le cambia solo `ciudad` → `GET` lo confirma
    → `DELETE` lo desactiva, y un **segundo** `DELETE` responde **404**.
    Además, un `PUT` sin el campo `correo` responde **422** mientras el
    **mismo cuerpo** enviado por `PATCH` responde **200** — la diferencia
    entre reemplazar y actualizar.
-5. **El borrado es lógico, y se verifica.** Después del `DELETE` el listado
-   vuelve a responder **204**, **y la fila sigue en la base** con
-   `activo = FALSE` (comprobable con una consulta directa).
+5. **El borrado es lógico, y se verifica.** Después del `DELETE` el `total` del
+   listado **baja en uno** —vuelve a 14—, **y la fila sigue en la base**
+   con `activo = FALSE` (comprobable con una consulta directa).
 6. **La validación es la frontera.** `POST` sin `correo` → **422** con
    `errores:[…]`; `POST` con un `nit` que no es un número → **422**;
    `POST` con un NIT que ya existe → **500** con el error del motor en
    `detalle`. En ninguno de los tres casos se toca la base.
 7. **Prueba de capas.** El proyecto `pruebas/` ejecuta el servicio con un
    **repositorio de mentiras** —otra implementación de la misma interfaz,
-   con una lista en memoria— y todas sus verificaciones pasan **con SQL
-   Server apagado**.
+   con una lista en memoria— y todas sus verificaciones pasan **con PostgreSQL apagado**.
 
 ## 6. Clarificaciones
 
@@ -134,7 +136,7 @@ otros nombres.
 | C4 | Ninguna tabla del módulo trae columna `activo`, pero la metodología exige borrado lógico | **Se agrega `activo BOOLEAN NOT NULL DEFAULT TRUE`** a las 22 tablas del módulo. Sin ella, la versión contradice su propia rúbrica | Artículo 6 · RF6 |
 | C5 | El catálogo trae **"Cienias Naturales"** (sin la `c`) en 48 de las 218 filas | **Se corrige** al generar las semillas, y queda anotado en la cabecera del script. Es un error de digitación de la fuente; cargarlo tal cual lo perpetúa en pantalla y en los informes | `db/init.sql` |
 | C6 | El Excel trae 35 facultades y 191 programas, pero sus tablas exigen columnas que el Excel no tiene y que no admiten nulos (`fecha_fun`; `nivel`, `numero_cohortes`, `ciudad`…). ¿Se rellenan o se dejan vacías? | **Se dejan vacías.** Rellenar seis columnas obligatorias para 191 programas sería **inventar datos**. Son tablas de la v2: esa versión decidirá si completa el catálogo o si relaja las restricciones | `db/init.sql` · `5_data_model` §3 |
-| C7 | La tabla `aliado` arranca **sin una sola fila**. ¿Es un problema para la v1? | **No: es una ventaja.** Permite que el smoke test recorra el ciclo completo desde el estado inicial —204, crear, listar, borrar, 204— y ejercite el **204 del listado vacío**, que una tabla llena nunca deja probar | RF1 · criterios 2 y 5 |
+| C7 | La hoja `aliado` del Excel trae la cabecera y **ni un solo dato**. ¿Se deja la tabla vacía? | **No: se siembran 14 filas de ejemplo, anunciadas como inventadas.** Una v1 sin filas no se puede ni mirar, y un listado vacío no demuestra que la pantalla pinte bien sus columnas. El precio es real y está dicho en `4_research` D-v1-9: el **204 del listado vacío** deja de verse al arrancar. A cambio, lo inventado se marca donde se lee —correos en `example.com`, teléfonos con `555`, y el aviso encima del `INSERT`— porque un dato inventado que no se anuncia termina citado como si fuera del módulo | `5_data_model` §3 · `db/init.sql` |
 | C8 | Un registro inactivo, ¿se puede consultar por su NIT? | **No: responde 404.** Si el listado los filtra, individualmente tampoco existen. Ser coherente importa más que ser permisivo | RF2 · RF6 |
 | C9 | ¿Y un segundo `DELETE` sobre el mismo NIT? | **404**, por consecuencia directa de C8: para la API ya no existe | RF6 · criterio 4 |
 | C10 | `?limite=0` o negativo, ¿es 422 o 400? | **400.** La forma del dato es correcta —sí es un entero—; lo que se rompe es una regla de negocio. El 422 se reserva para el cuerpo mal formado | RF1 · Artículo 10 |

@@ -39,28 +39,50 @@ erDiagram
 espacios, guiones y extensiones, y nunca se suman ni se ordenan
 aritméticamente. Guardar como número perdería el cero inicial de un fijo.
 
-## 3. Las semillas: ninguna, y a propósito
+## 3. Las semillas: 14 aliados de ejemplo, y se dice que lo son
 
-**`aliado` arranca vacía.** El Excel de referencia del módulo no trae
-aliados, y no se inventan (C7).
+**`aliado` arranca con 14 filas inventadas.** Aquí no hay nada que derivar:
+la hoja `aliado` del Excel del módulo trae **la fila de cabeceras y ni un
+solo dato**. Así que estas catorce no vienen de ninguna parte: se
+escribieron para que la v1 tenga algo que mostrar (C7).
 
-Eso define el estado inicial del sistema y **da forma al smoke test**: el
-primer `GET` responde **204**, y el recorrido completo —crear, listar,
-actualizar, borrar, volver al 204— se puede correr desde cero, en cualquier
-máquina, sin depender de datos previos.
+Y por eso lo importante de esta sección no es qué se sembró, sino **cómo se
+marcó**:
 
-Los catálogos que **sí** vienen cargados, aunque la v1 no los nombre:
+| Campo | Cómo está hecho | Por qué |
+|---|---|---|
+| `correo` | Todos bajo `example.com` | Es el dominio que la **IANA reserva** para documentación: no le pertenece a nadie y nunca va a entregar un correo |
+| `telefono` | Todos con `555` | El prefijo que por convención no corresponde a ninguna línea real |
+| `nombre_contacto` | Personas inventadas | Es **el campo de datos personales de la tabla**. Ni aquí, ni en las capturas del curso, ni en un ejemplo de clase va el nombre de alguien real |
+| `razon_social` y `nit` | Organizaciones y NIT inventados | Ninguna de las catorce existe |
+| `ciudad` | Las **seis de la tabla `universidad`**, que esa sí viene del Excel | Un aliado en una ciudad donde el módulo no tiene sede no le sirve de ejemplo a nadie |
+
+> **La regla que esto ilustra: un dato inventado que no se anuncia, se
+> cita.** Termina en una diapositiva, en un informe o en la consulta de una
+> versión posterior, y para entonces ya nadie recuerda que se lo inventó
+> alguien un martes. Por eso el aviso no está solo aquí: está **dentro de
+> `db/init.sql`, en el comentario que va justo encima del `INSERT`**, que
+> es donde lo va a leer quien mire los datos.
+
+Los catálogos que además vienen cargados, aunque la v1 no los nombre:
 
 | Tabla | Filas |
 |---|---|
+| `aliado` | **14** (de ejemplo) |
 | `area_conocimiento` | 218 |
 | `universidad` | 6 |
 | Todas las demás | 0 |
 
 > **`facultad` y `programa` quedan vacías aunque el Excel tenga 35 y 191
 > filas** (C6): sus tablas exigen columnas que el Excel no trae y que no
-> admiten nulos. Rellenarlas sería inventar datos. Es un problema de la
-> v2, no de esta.
+> admiten nulos. Es un problema de la v2, no de esta.
+>
+> **Y conviene decir que «rellenarlas sería inventar datos» era una
+> respuesta perezosa.** El módulo de gestión profesoral sembró esa misma
+> tabla `programa` con las 191 filas: dos de las columnas que faltaban
+> —`nivel` y `ciudad`— **se derivan del propio Excel**, y solo cuatro se
+> quedan sin origen. Cuando esta v2 llegue, el trabajo ya está hecho ahí
+> y no hay que repetir la decisión desde cero.
 
 ## 4. Invariantes: quién escribe qué
 

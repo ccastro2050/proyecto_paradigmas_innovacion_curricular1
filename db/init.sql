@@ -22,8 +22,10 @@
 -- Las 25 tablas se crean COMPLETAS aunque la v1 solo use una: la base
 -- es infraestructura dada. Lo que crece por versiones es la API.
 --
--- La tabla de la v1 es 'aliado', y arranca VACÍA: el Excel de referencia
--- no trae sus filas, y rellenarlas sería inventar datos.
+-- La tabla de la v1 es 'aliado', y arranca con 14 filas DE EJEMPLO. El
+-- Excel de referencia no trae ninguna, así que estas se inventaron: el
+-- comentario que va justo encima del INSERT lo dice, y lo dice ahí para
+-- que lo lea quien mire los datos, no solo quien lea esta cabecera.
 --
 -- PostgreSQL ejecuta este archivo SOLO en el primer arranque, cuando el
 -- volumen está vacío. Para volver a correrlo: docker compose down -v
@@ -595,9 +597,44 @@ INSERT INTO area_conocimiento (id, gran_area, area, disciplina) VALUES
     ('6E02', 'Humanidades', 'Otras Humanidades', 'Filosofía'),
     ('6E03', 'Humanidades', 'Otras Humanidades', 'Teología');
 
+-- aliado: 14 filas DE EJEMPLO. Ojo con esto.
+--
+-- Las otras dos tablas de arriba salieron del Excel del módulo. Esta NO:
+-- la hoja `aliado` del Excel trae la fila de cabeceras y ni un solo dato.
+-- Como una v1 sin filas no se puede ni mirar, se siembran catorce inventadas
+-- —y se dice aquí, porque un dato inventado que no se anuncia termina
+-- citado en un informe como si fuera del módulo.
+--
+-- Están hechas para que se noten: los correos van al dominio `example.com`,
+-- que la IANA reserva justamente para documentación y no le pertenece a
+-- nadie, y los teléfonos usan el 555, que no existe. Ninguna organización,
+-- ningún NIT y ninguna persona de esta lista es real; `nombre_contacto` es
+-- el campo de datos personales de la tabla, y por eso no lleva a nadie de
+-- verdad ni aquí ni en las capturas de pantalla del curso.
+--
+-- Las ciudades sí son las seis de la tabla `universidad`: un aliado en una
+-- ciudad donde el módulo no tiene sede no le sirve de ejemplo a nadie.
+INSERT INTO aliado (nit, razon_social, nombre_contacto, correo, telefono,
+                    ciudad) VALUES
+    (900100201, 'Fundación Tejido Urbano', 'Marta Elena Ríos', 'contacto@tejidourbano.example.com', '+57 604 555 0101', 'Medellín'),
+    (900100202, 'Cooperativa Agroandina', 'Julián Restrepo Vélez', 'alianzas@agroandina.example.com', '+57 604 555 0102', 'Medellín'),
+    (900100203, 'Corporación Aula Abierta', 'Sandra Milena Pineda', 'direccion@aulaabierta.example.com', '+57 601 555 0103', 'Bogotá'),
+    (900100204, 'Instituto de Energías Limpias del Valle', 'Camilo Andrés Ocampo', 'proyectos@energiaslimpias.example.com', '+57 602 555 0104', 'Cali'),
+    (900100205, 'Red de Museos del Caribe', 'Diana Carolina Meza', 'vinculacion@museoscaribe.example.com', '+57 605 555 0105', 'Cartagena'),
+    (900100206, 'Clínica Universitaria del Quindío', 'Andrés Felipe Salazar', 'docencia@clinicaquindio.example.com', '+57 606 555 0106', 'Armenia'),
+    (900100207, 'Tecnoparque del Tolima', 'Luz Adriana Cifuentes', 'convenios@tecnotolima.example.com', '+57 608 555 0107', 'Ibagué'),
+    (900100208, 'Semillero Industrial Antioqueño', 'Óscar Iván Betancur', 'gerencia@semilleroindustrial.example.com', '+57 604 555 0108', 'Medellín'),
+    (900100209, 'Fundación Aguas del Pacífico', 'Paula Andrea Mosquera', 'contacto@aguaspacifico.example.com', '+57 602 555 0109', 'Cali'),
+    (900100210, 'Gremio de Empresas Simuladas', 'Ricardo Alfonso Duque', 'empresas@gremiosimulado.example.com', '+57 601 555 0110', 'Bogotá'),
+    (900100211, 'Observatorio Social del Caribe', 'Nubia Esther Padilla', 'estudios@observatoriocaribe.example.com', '+57 605 555 0111', 'Cartagena'),
+    (900100212, 'Laboratorio de Innovación Pública', 'Héctor Mauricio Lozano', 'innovacion@labpublico.example.com', '+57 601 555 0112', 'Bogotá'),
+    (900100213, 'Asociación de Egresados en Ingeniería', 'Claudia Patricia Arango', 'egresados@asoingenieria.example.com', '+57 604 555 0113', 'Medellín'),
+    (900100214, 'Centro de Estudios Cafeteros', 'Fernando José Gutiérrez', 'direccion@cafeteros.example.com', '+57 606 555 0114', 'Armenia');
+
+
 -- ============================================================
 -- Conteos esperados:
 --   universidad                         6 filas
 --   area_conocimiento                 218 filas
---   aliado                           0 filas (la v1 arranca con la tabla vacía)
+--   aliado                             14 filas (DE EJEMPLO: el Excel no las trae)
 -- ============================================================
