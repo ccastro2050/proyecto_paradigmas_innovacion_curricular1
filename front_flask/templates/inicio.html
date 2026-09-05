@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block titulo %}Innovación Curricular{% endblock %}
+
+{% block contenido %}
+<div class="portada">
+  <h1>Módulo de Innovación Curricular</h1>
+  <p class="nota">Las organizaciones aliadas, con sus datos de contacto.</p>
+</div>
+
+<div class="tarjetas">
+
+  <article class="tarjeta">
+    <h2>Aliados</h2>
+    <p>Las organizaciones aliadas, con sus datos de contacto.</p>
+    <a class="boton primario" href="{{ url_for('listar_aliados') }}">
+      Ver el listado
+    </a>
+  </article>
+
+  {# La segunda tarjeta NO es un enlace, y es deliberado: dice lo que esta
+     versión NO hace. Un menú que promete pantallas que no existen es peor
+     que un menú corto. #}
+  <article class="tarjeta apagada">
+    <h2>Las demás tablas</h2>
+    <p>
+      Esta versión construye <strong>una</strong> tabla completa, de punta a
+      punta: su API y su pantalla. Las demás llegan en las versiones
+      siguientes, cada una con la suya.
+    </p>
+  </article>
+
+</div>
+{% endblock %}

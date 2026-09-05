@@ -34,7 +34,9 @@ otros nombres.
   la v2. En particular, `alianza` —que relaciona un aliado con un
   programa— pertenece a esa versión.
 - Autenticación, JWT, roles ni usuarios: eso es la v3.
-- Frontend, dashboard ni consultas multitabla: eso es la v4.
+- Dashboard ni consultas multitabla: eso es la v4.
+- Más pantallas que la de `aliado`: las demás tablas llegan en la
+  v2, cada una con la suya.
 - **Reactivar** un registro inactivo (`activo = TRUE`). Nadie lo pidió.
 - Validar el formato del correo o del teléfono más allá de que estén
   presentes: sería una regla de negocio que ninguna versión ha pedido.
